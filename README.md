@@ -1,0 +1,2 @@
+# analisissoal
+LCN PALEMBANG
