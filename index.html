@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analisis Butir Soal - lcnpalembang-08994477998</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Sticky columns untuk memudahkan scroll horizontal 40 soal */
+        .sticky-col-no {
+            position: sticky;
+            left: 0;
+            z-index: 20;
+        }
+        .sticky-col-name {
+            position: sticky;
+            left: 44px;
+            z-index: 20;
+        }
+        .sticky-header-no {
+            position: sticky;
+            left: 0;
+            z-index: 30;
+        }
+        .sticky-header-name {
+            position: sticky;
+            left: 44px;
+            z-index: 30;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            height: 10px;
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 6px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 6px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        /* Hilangkan panah default pada input number agar rapi seperti sel Excel */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            .sticky-col-no, .sticky-col-name, .sticky-header-no, .sticky-header-name {
+                position: static !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- Header / Top Bar -->
+    <header class="bg-white border-b border-slate-200 shadow-sm no-print">
+        <div class="max-w-[1600px] mx-auto px-4 sm:px-6 py-4 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div>
+                <div class="flex items-center gap-2.5">
+                    <span class="bg-amber-400 text-slate-900 font-bold px-2.5 py-1 rounded-lg text-sm shadow-xs">汉语 4</span>
+                    <h1 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">Analisis Butir Soal - lcnpalembang (08994477998)</h1>
+                </div>
+                <p class="text-xs sm:text-sm text-slate-500 mt-1">
+                    Kelas 4 • Total 40 Soal • Skor Maksimal: <strong class="text-slate-700">60</strong> (No. 1–25 = 1 poin, No. 26–35 = 2 poin, No. 36–40 = 3 poin) • Nilai Akhir Maksimal: <strong class="text-slate-700">100</strong>
+                </p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-wrap items-center gap-2">
+                <div class="flex items-center bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200">
+                    <label for="kkmInput" class="text-xs font-semibold text-slate-600 mr-2">KKM:</label>
+                    <input type="number" id="kkmInput" value="75" min="0" max="100" onchange="renderTable()" class="w-14 text-center font-bold text-sm bg-white border border-slate-300 rounded-lg py-0.5 focus:outline-none focus:ring-2 focus:ring-amber-400">
+                </div>
+
+                <button onclick="openBulkModal()" class="bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium text-xs sm:text-sm px-3.5 py-2 rounded-xl shadow-2xs transition flex items-center gap-1.5 cursor-pointer">
+                    <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    Import / Tambah Massal
+                </button>
+
+                <button onclick="addStudentRow()" class="bg-amber-400 hover:bg-amber-500 text-slate-900 font-semibold text-xs sm:text-sm px-3.5 py-2 rounded-xl shadow-2xs transition flex items-center gap-1.5 cursor-pointer">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    Tambah Murid
+                </button>
+
+                <button onclick="copyAllTableToClipboard(false)" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs sm:text-sm px-3.5 py-2 rounded-xl shadow-2xs transition flex items-center gap-1.5 cursor-pointer" title="Salin seluruh tabel lengkap dengan header dan bobot soal untuk di-paste ke Excel">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+                    Salin Tabel Lengkap
+                </button>
+
+                <button onclick="copyAllTableToClipboard(true)" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 font-medium text-xs sm:text-sm px-3 py-2 rounded-xl shadow-2xs transition flex items-center gap-1.5 cursor-pointer" title="Salin hanya baris data murid (No, Nama, Poin 1-40, Total Skor, Nilai Akhir) tanpa baris judul">
+                    Salin Data Saja
+                </button>
+
+                <button onclick="exportToExcelCSV()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs sm:text-sm px-3.5 py-2 rounded-xl shadow-2xs transition flex items-center gap-1.5 cursor-pointer">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                    Unduh Excel (.csv)
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="flex-1 max-w-[1600px] w-full mx-auto px-4 sm:px-6 py-5 space-y-5">
+
+        <!-- Summary Cards -->
+        <section class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3">
+            <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs">
+                <p class="text-xs font-medium text-slate-500">Jumlah Murid</p>
+                <p id="statTotalStudents" class="text-xl font-bold text-slate-900 mt-1">0</p>
+            </div>
+            <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs">
+                <p class="text-xs font-medium text-slate-500">Rata-rata Nilai</p>
+                <p id="statAvgGrade" class="text-xl font-bold text-blue-600 mt-1">0.0</p>
+            </div>
+            <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs">
+                <p class="text-xs font-medium text-slate-500">Nilai Tertinggi</p>
+                <p id="statMaxGrade" class="text-xl font-bold text-emerald-600 mt-1">0</p>
+            </div>
+            <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs">
+                <p class="text-xs font-medium text-slate-500">Nilai Terendah</p>
+                <p id="statMinGrade" class="text-xl font-bold text-rose-600 mt-1">0</p>
+            </div>
+            <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs">
+                <p class="text-xs font-medium text-slate-500">Ketuntasan Klasikal</p>
+                <p id="statPassRate" class="text-xl font-bold text-indigo-600 mt-1">0%</p>
+            </div>
+            <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs">
+                <p class="text-xs font-medium text-slate-500">Butir Perlu Revisi</p>
+                <p id="statHardItems" class="text-xl font-bold text-amber-600 mt-1">0 Soal</p>
+            </div>
+        </section>
+
+        <!-- Panduan Interaksi Cepat -->
+        <section class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs flex flex-col lg:flex-row lg:items-center justify-between gap-3 no-print">
+            <div class="flex flex-wrap items-center gap-2 text-xs text-slate-600">
+                <span class="font-semibold text-slate-800">Klik sel butir soal untuk ubah skor:</span>
+                <span class="bg-slate-100 px-2 py-0.5 rounded border border-slate-200">No 1–25: <b>1</b> → <b>0</b></span>
+                <span class="bg-slate-100 px-2 py-0.5 rounded border border-slate-200">No 26–35: <b>2</b> → <b>1</b> → <b>0</b></span>
+                <span class="bg-slate-100 px-2 py-0.5 rounded border border-slate-200">No 36–40: <b>3</b> → <b>2</b> → <b>1</b> → <b>0</b></span>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+                <span class="text-xs font-semibold text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-lg border border-indigo-200">
+                    Tip: Bisa langsung Copy-Paste (Ctrl+V) kolom Nama Murid atau Nilai Akhir dari Excel!
+                </span>
+                <button onclick="setAllFullScore()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-3 py-1.5 rounded-lg transition cursor-pointer">
+                    Reset Semua Benar (100)
+                </button>
+                <button onclick="simulateRealisticData()" class="text-xs bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-medium px-3 py-1.5 rounded-lg transition cursor-pointer">
+                    Simulasi Variasi Jawaban
+                </button>
+            </div>
+        </section>
+
+        <!-- Main Analysis Table Container -->
+        <section class="bg-white rounded-2xl border border-slate-300 shadow-sm overflow-hidden">
+            <div class="overflow-x-auto max-h-[68vh]">
+                <table class="w-full border-collapse text-xs sm:text-sm select-none" id="analysisTable">
+                    <thead id="tableHead" class="sticky top-0 z-20 shadow-xs">
+                        <!-- Rendered dynamically via JS -->
+                    </thead>
+                    <tbody id="tableBody" class="divide-y divide-slate-200">
+                        <!-- Rendered dynamically via JS -->
+                    </tbody>
+                    <tfoot id="tableFoot" class="bg-slate-100 font-semibold border-t-2 border-slate-400">
+                        <!-- Rendered dynamically via JS -->
+                    </tfoot>
+                </table>
+            </div>
+        </section>
+
+        <!-- Legenda Keterangan Analisis -->
+        <section class="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-slate-600">
+            <div>
+                <h3 class="font-bold text-slate-800 mb-1">1. Ketentuan Pembobotan Skor</h3>
+                <ul class="space-y-1 list-disc list-inside">
+                    <li><strong>Nomor 1 – 25:</strong> Bobot 1 poin (25 × 1 = 25 poin)</li>
+                    <li><strong>Nomor 26 – 35:</strong> Bobot 2 poin (10 × 2 = 20 poin)</li>
+                    <li><strong>Nomor 36 – 40:</strong> Bobot 3 poin (5 × 3 = 15 poin)</li>
+                    <li><strong>Total Skor Maksimal:</strong> 60 poin → <strong>Nilai Akhir = (Skor / 60) × 100</strong></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="font-bold text-slate-800 mb-1">2. Tingkat Kesukaran Butir (P)</h3>
+                <ul class="space-y-1 list-disc list-inside">
+                    <li><span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 mr-1"></span><strong>P &gt; 0.70 (Mudah):</strong> Sebagian besar murid menjawab benar.</li>
+                    <li><span class="inline-block w-2.5 h-2.5 rounded-full bg-amber-400 mr-1"></span><strong>0.30 ≤ P ≤ 0.70 (Sedang):</strong> Proporsi ideal untuk soal sumatif.</li>
+                    <li><span class="inline-block w-2.5 h-2.5 rounded-full bg-rose-500 mr-1"></span><strong>P &lt; 0.30 (Sukar):</strong> Perlu evaluasi materi atau redaksi soal.</li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="font-bold text-slate-800 mb-1">3. Fitur Copy-Paste Dua Arah</h3>
+                <p class="leading-relaxed">
+                    Anda dapat mem-paste daftar <strong>Nama Murid</strong> atau <strong>Nilai Akhir</strong> dari Excel langsung ke kolom tabel. Saat Nilai Akhir diubah atau di-paste, <strong>Total Skor (skala 60)</strong> dan <strong>bobot per butir soal</strong> akan terhitung otomatis secara proporsional.
+                </p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal Import / Tambah Massal -->
+    <div id="bulkModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-5 shadow-xl border border-slate-200 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h2 class="text-base font-bold text-slate-900">Import / Tambah Daftar Murid Massal</h2>
+                <button onclick="closeBulkModal()" class="text-slate-400 hover:text-slate-600 cursor-pointer">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <p class="text-xs text-slate-500">
+                Tempel (paste) daftar nama murid dari Excel/Word di bawah ini (satu nama per baris). Setiap murid baru otomatis diberi skor awal penuh (60 poin / Nilai 100).
+            </p>
+            <textarea id="bulkNamesTextarea" rows="7" placeholder="Contoh:&#10;Ahmad Fauzi&#10;Budi Santoso&#10;Chandra Wijaya&#10;Dewi Lestari" class="w-full border border-slate-300 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"></textarea>
+            <div class="flex items-center justify-between pt-2">
+                <label class="flex items-center gap-2 text-xs text-slate-600 cursor-pointer">
+                    <input type="checkbox" id="replaceExistingCheck" class="rounded text-amber-500 focus:ring-amber-400">
+                    Ganti seluruh daftar murid yang ada
+                </label>
+                <div class="flex gap-2">
+                    <button onclick="closeBulkModal()" class="px-3.5 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-xl cursor-pointer">Batal</button>
+                    <button onclick="processBulkNames()" class="px-4 py-2 text-xs font-semibold bg-amber-400 hover:bg-amber-500 text-slate-900 rounded-xl cursor-pointer">Simpan Daftar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast (Pengganti alert) -->
+    <div id="toastBox" class="fixed bottom-5 right-5 bg-slate-900 text-white text-xs sm:text-sm px-4 py-3 rounded-xl shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+        <span id="toastMessage">Tersimpan</span>
+    </div>
+
+    <script>
+        // Konfigurasi Bobot Soal Sesuai Ketentuan:
+        // No 1-25  = 1 poin (25 soal)
+        // No 26-35 = 2 poin (10 soal)
+        // No 36-40 = 3 poin (5 soal)
+        // Total Maksimal = 60 poin -> Nilai Akhir = 100
+        const TOTAL_QUESTIONS = 40;
+        const QUESTION_WEIGHTS = Array.from({ length: TOTAL_QUESTIONS }, (_, i) => {
+            const num = i + 1;
+            if (num <= 25) return 1;
+            if (num <= 35) return 2;
+            return 3;
+        });
+        const MAX_RAW_SCORE = QUESTION_WEIGHTS.reduce((sum, w) => sum + w, 0); // 60
+
+        // Data Awal Murid sesuai gambar referensi
+        const INITIAL_NAMES = ['aaa', 'bbb', 'ccc', 'dd', 'ee', 'eeee', 'ff', 'fffff', 'gg'];
+        let students = INITIAL_NAMES.map((name, idx) => ({
+            id: idx + 1,
+            name: name,
+            scores: [...QUESTION_WEIGHTS]
+        }));
+
+        // Helper: Menampilkan notifikasi toast halus
+        let toastTimeout;
+        function showToast(msg) {
+            const box = document.getElementById('toastBox');
+            const text = document.getElementById('toastMessage');
+            text.textContent = msg;
+            box.classList.remove('translate-y-20', 'opacity-0');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                box.classList.add('translate-y-20', 'opacity-0');
+            }, 2800);
+        }
+
+        // Bangun Header Tabel Persis Format Gambar (Header Kuning untuk No 1-40 + Baris Bobot)
+        function buildTableHeader() {
+            const thead = document.getElementById('tableHead');
+            let numCols = '';
+            let weightCols = '';
+
+            for (let i = 1; i <= TOTAL_QUESTIONS; i++) {
+                const w = QUESTION_WEIGHTS[i - 1];
+                numCols += `<th class="bg-[#FFFF00] text-slate-900 font-bold border border-slate-400 px-1.5 py-1.5 min-w-[34px] text-center">${i}</th>`;
+                weightCols += `<th class="bg-amber-100 text-slate-700 font-semibold border border-slate-400 px-1 py-1 text-[11px] text-center" title="Bobot Maksimal Soal ${i}">(${w})</th>`;
+            }
+
+            thead.innerHTML = `
+                <tr>
+                    <th rowspan="3" class="sticky-header-no bg-white text-slate-900 font-bold border border-slate-400 px-2 py-2 w-[44px] min-w-[44px] text-center">No</th>
+                    <th rowspan="3" class="sticky-header-name bg-white text-slate-900 font-bold border border-slate-400 px-3 py-2 min-w-[190px] text-center shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">
+                        <div>Nama Murid</div>
+                        <button onclick="focusAndSelectAllNames()" type="button" class="mt-1 text-[10px] font-medium bg-amber-100 hover:bg-amber-200 text-amber-900 px-2 py-0.5 rounded border border-amber-300 transition cursor-pointer no-print" title="Blok semua baris nama agar siap ditimpa/paste daftar nama baru">
+                            Blok & Ganti Semua
+                        </button>
+                    </th>
+                    <th colspan="${TOTAL_QUESTIONS}" class="bg-white text-slate-900 font-bold border border-slate-400 py-1.5 text-center tracking-wide">Nomor Soal</th>
+                    <th rowspan="3" class="bg-blue-50 text-blue-900 font-bold border border-slate-400 px-2.5 py-2 min-w-[78px] text-center leading-tight">Total<br>Skor<br><span class="text-[10px] font-normal">(Maks 60)</span></th>
+                    <th rowspan="3" class="bg-emerald-50 text-emerald-900 font-bold border border-slate-400 px-2.5 py-2 min-w-[82px] text-center leading-tight">Nilai<br>Akhir<br><span class="text-[10px] font-normal">(Maks 100)</span></th>
+                    <th rowspan="3" class="bg-slate-100 text-slate-800 font-bold border border-slate-400 px-2.5 py-2 min-w-[86px] text-center">Ketuntasan</th>
+                    <th rowspan="3" class="bg-slate-100 text-slate-700 font-bold border border-slate-400 px-2 py-2 min-w-[46px] text-center no-print">Aksi</th>
+                </tr>
+                <tr>
+                    ${numCols}
+                </tr>
+                <tr>
+                    ${weightCols}
+                </tr>
+            `;
+        }
+
+        // Render Isi Tabel & Kalkulasi Statistik
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            const tfoot = document.getElementById('tableFoot');
+            const kkm = parseFloat(document.getElementById('kkmInput').value) || 75;
+
+            if (students.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="${TOTAL_QUESTIONS + 6}" class="py-10 text-center text-slate-500">
+                            Belum ada data murid. Klik <strong>"+ Tambah Murid"</strong> atau <strong>"Import / Tambah Massal"</strong> untuk memulai.
+                        </td>
+                    </tr>
+                `;
+                tfoot.innerHTML = '';
+                updateDashboardCards([], 0, 0, 0, 0);
+                return;
+            }
+
+            let rowsHTML = '';
+            const itemTotals = new Array(TOTAL_QUESTIONS).fill(0);
+            const finalGrades = [];
+            let passedCount = 0;
+
+            students.forEach((student, sIdx) => {
+                let rawTotal = 0;
+                let cellsHTML = '';
+
+                for (let qIdx = 0; qIdx < TOTAL_QUESTIONS; qIdx++) {
+                    const maxW = QUESTION_WEIGHTS[qIdx];
+                    const val = student.scores[qIdx];
+                    rawTotal += val;
+                    itemTotals[qIdx] += val;
+
+                    // Pewarnaan sel berdasarkan capaian skor
+                    let cellBg = 'bg-white text-slate-900 hover:bg-amber-50';
+                    if (val === 0) {
+                        cellBg = 'bg-rose-100 text-rose-800 font-bold hover:bg-rose-200';
+                    } else if (val < maxW) {
+                        cellBg = 'bg-amber-100 text-amber-900 font-semibold hover:bg-amber-200';
+                    }
+
+                    cellsHTML += `
+                        <td onclick="cycleCellScore(${sIdx}, ${qIdx})" 
+                            title="Klik untuk ubah skor Soal ${qIdx + 1} (Maks: ${maxW})"
+                            class="border-r border-slate-300 px-1 py-1.5 text-center cursor-pointer transition-colors ${cellBg}">
+                            ${val}
+                        </td>
+                    `;
+                }
+
+                // Konversi ke skala 100
+                const finalGrade = (rawTotal / MAX_RAW_SCORE) * 100;
+                finalGrades.push(finalGrade);
+
+                const isPassed = finalGrade >= kkm;
+                if (isPassed) passedCount++;
+
+                const statusBadge = isPassed
+                    ? `<span class="inline-block bg-emerald-100 text-emerald-800 font-semibold px-2 py-0.5 rounded-full text-[11px]">Tuntas</span>`
+                    : `<span class="inline-block bg-rose-100 text-rose-800 font-semibold px-2 py-0.5 rounded-full text-[11px]">Remedial</span>`;
+
+                rowsHTML += `
+                    <tr class="hover:bg-slate-50/80 transition-colors">
+                        <td class="sticky-col-no bg-white border-r border-slate-300 px-2 py-1.5 text-center font-medium text-slate-600">${sIdx + 1}</td>
+                        <td class="sticky-col-name bg-white border-r border-slate-300 px-3 py-1.5 text-left font-medium text-slate-900 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.06)]">
+                            <input type="text" value="${escapeHtml(student.name)}" 
+                                   data-name-row="${sIdx}"
+                                   onfocus="this.select()"
+                                   onkeydown="handleNameKeyDown(event, ${sIdx})"
+                                   onchange="updateStudentName(${sIdx}, this.value)"
+                                   onpaste="handlePasteNames(event, ${sIdx})"
+                                   placeholder="Nama / Paste dari Excel"
+                                   class="name-input-cell w-full bg-transparent focus:bg-yellow-50 focus:outline-none focus:ring-1 focus:ring-amber-400 rounded px-1 -mx-1 transition-colors">
+                        </td>
+                        ${cellsHTML}
+                        <td class="border-r border-slate-300 px-1 py-1 text-center font-bold bg-blue-50/60 text-blue-900">
+                            <input type="number" step="1" min="0" max="${MAX_RAW_SCORE}" value="${rawTotal}"
+                                   onfocus="this.select()"
+                                   onchange="updateStudentRawScore(${sIdx}, this.value)"
+                                   onpaste="handlePasteRawScores(event, ${sIdx})"
+                                   title="Ketik atau Paste Total Skor (0-60) untuk menyesuaikan bobot butir soal secara acak & menghitung Nilai Akhir"
+                                   class="w-14 text-center font-bold bg-transparent focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 rounded py-0.5 text-blue-900">
+                        </td>
+                        <td class="border-r border-slate-300 px-1 py-1 text-center font-bold bg-emerald-50/60 text-emerald-900">
+                            <input type="number" step="0.1" min="0" max="100" value="${Number(finalGrade.toFixed(1))}"
+                                   onfocus="this.select()"
+                                   onchange="updateStudentFinalGrade(${sIdx}, this.value)"
+                                   onpaste="handlePasteGrades(event, ${sIdx})"
+                                   title="Ketik atau Paste Nilai Akhir (0-100) untuk menyesuaikan Total Skor & Bobot Butir Soal otomatis"
+                                   class="w-16 text-center font-bold bg-transparent focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 rounded py-0.5 text-emerald-900">
+                        </td>
+                        <td class="border-r border-slate-300 px-2 py-1.5 text-center">${statusBadge}</td>
+                        <td class="px-2 py-1.5 text-center no-print">
+                            <button onclick="deleteStudentRow(${sIdx})" title="Hapus murid" class="text-slate-400 hover:text-rose-600 transition p-1 cursor-pointer">
+                                <svg class="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = rowsHTML;
+
+            // Hitung Baris Analisis Butir (Footer)
+            const totalStudents = students.length;
+            let sumScoreCells = '';
+            let difficultyCells = '';
+            let categoryCells = '';
+            let hardItemsCount = 0;
+
+            for (let qIdx = 0; qIdx < TOTAL_QUESTIONS; qIdx++) {
+                const maxPossibleForItem = totalStudents * QUESTION_WEIGHTS[qIdx];
+                const obtained = itemTotals[qIdx];
+                const pIndex = maxPossibleForItem > 0 ? (obtained / maxPossibleForItem) : 0;
+
+                let diffColor = 'text-amber-700 bg-amber-50';
+                let label = 'Sedang';
+                if (pIndex > 0.70) {
+                    diffColor = 'text-emerald-700 bg-emerald-50';
+                    label = 'Mudah';
+                } else if (pIndex < 0.30) {
+                    diffColor = 'text-rose-700 bg-rose-50 font-bold';
+                    label = 'Sukar';
+                    hardItemsCount++;
+                }
+
+                sumScoreCells += `<td class="border-r border-slate-300 px-1 py-1.5 text-center text-slate-700">${obtained}</td>`;
+                difficultyCells += `<td class="border-r border-slate-300 px-1 py-1.5 text-center ${diffColor}">${pIndex.toFixed(2)}</td>`;
+                categoryCells += `<td class="border-r border-slate-300 px-1 py-1.5 text-center text-[10px] ${diffColor}">${label}</td>`;
+            }
+
+            const avgRaw = (itemTotals.reduce((a, b) => a + b, 0) / totalStudents).toFixed(1);
+            const avgGrade = (finalGrades.reduce((a, b) => a + b, 0) / totalStudents);
+            const maxGrade = Math.max(...finalGrades);
+            const minGrade = Math.min(...finalGrades);
+            const passRate = ((passedCount / totalStudents) * 100).toFixed(0);
+
+            tfoot.innerHTML = `
+                <tr class="border-t-2 border-slate-400">
+                    <td colspan="2" class="sticky-col-no bg-slate-100 border-r border-slate-300 px-3 py-1.5 text-right text-slate-700">Jumlah Skor Butir</td>
+                    ${sumScoreCells}
+                    <td class="border-r border-slate-300 px-2 py-1.5 text-center bg-blue-100 text-blue-900">Rata2: ${avgRaw}</td>
+                    <td class="border-r border-slate-300 px-2 py-1.5 text-center bg-emerald-100 text-emerald-900">Rata2: ${avgGrade.toFixed(1)}</td>
+                    <td colspan="2" class="px-2 py-1.5 text-center text-slate-700">${passedCount}/${totalStudents} Tuntas</td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="sticky-col-no bg-slate-100 border-r border-slate-300 px-3 py-1.5 text-right text-slate-700">Indeks Kesukaran (P)</td>
+                    ${difficultyCells}
+                    <td colspan="4" class="px-3 py-1.5 text-left text-xs font-normal text-slate-600">Proporsi skor diperoleh dibanding skor maksimal tiap butir</td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="sticky-col-no bg-slate-100 border-r border-slate-300 px-3 py-1.5 text-right text-slate-700">Klasifikasi Butir</td>
+                    ${categoryCells}
+                    <td colspan="4" class="px-3 py-1.5 text-left text-xs font-normal text-slate-600">Mudah (&gt;0.70) • Sedang (0.30–0.70) • Sukar (&lt;0.30)</td>
+                </tr>
+            `;
+
+            updateDashboardCards(finalGrades, avgGrade, maxGrade, minGrade, passRate, hardItemsCount);
+        }
+
+        function updateDashboardCards(grades, avg, max, min, passRate, hardItemsCount = 0) {
+            document.getElementById('statTotalStudents').textContent = grades.length;
+            document.getElementById('statAvgGrade').textContent = grades.length ? avg.toFixed(1) : '0.0';
+            document.getElementById('statMaxGrade').textContent = grades.length ? max.toFixed(1) : '0';
+            document.getElementById('statMinGrade').textContent = grades.length ? min.toFixed(1) : '0';
+            document.getElementById('statPassRate').textContent = `${passRate}%`;
+            document.getElementById('statHardItems').textContent = `${hardItemsCount} Soal`;
+        }
+
+        // Klik sel untuk menurunkan skor secara siklikal: Max -> Max-1 -> ... -> 0 -> Max
+        function cycleCellScore(studentIndex, questionIndex) {
+            const maxW = QUESTION_WEIGHTS[questionIndex];
+            const current = students[studentIndex].scores[questionIndex];
+            const nextVal = current > 0 ? current - 1 : maxW;
+            students[studentIndex].scores[questionIndex] = nextVal;
+            renderTable();
+        }
+
+        // Edit nama murid secara inline
+        function updateStudentName(studentIndex, newName) {
+            const trimmed = newName.trim();
+            if (trimmed) {
+                students[studentIndex].name = trimmed;
+            } else {
+                renderTable();
+            }
+        }
+
+        // State untuk menandai mode seleksi seluruh kolom nama (Ctrl+A / tombol Blok & Ganti Semua)
+        let isAllNamesSelected = false;
+
+        function focusAndSelectAllNames() {
+            const nameInputs = document.querySelectorAll('.name-input-cell');
+            if (nameInputs.length === 0) return;
+            isAllNamesSelected = true;
+            nameInputs.forEach(inp => {
+                inp.classList.add('bg-amber-200/80', 'ring-1', 'ring-amber-500');
+            });
+            nameInputs[0].focus();
+            nameInputs[0].select();
+            showToast('Semua baris Nama Murid terpilih. Tekan Ctrl+V untuk menimpa dengan daftar nama baru.');
+        }
+
+        function clearAllNamesSelection() {
+            if (!isAllNamesSelected) return;
+            isAllNamesSelected = false;
+            document.querySelectorAll('.name-input-cell').forEach(inp => {
+                inp.classList.remove('bg-amber-200/80', 'ring-1', 'ring-amber-500');
+            });
+        }
+
+        function handleNameKeyDown(event, rowIndex) {
+            // Jika user menekan Ctrl+A / Cmd+A di dalam kolom nama, blok seluruh kolom nama agar siap di-paste/ditimpa
+            if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'a') {
+                event.preventDefault();
+                focusAndSelectAllNames();
+                return;
+            }
+            // Jika user menekan Delete/Backspace saat seluruh kolom nama diblok
+            if (isAllNamesSelected && (event.key === 'Delete' || event.key === 'Backspace')) {
+                event.preventDefault();
+                students.forEach((s, idx) => {
+                    s.name = `Murid ${idx + 1}`;
+                });
+                isAllNamesSelected = false;
+                renderTable();
+                showToast('Daftar nama murid dikosongkan ke default.');
+                return;
+            }
+            if (event.key === 'Escape') {
+                clearAllNamesSelection();
+            }
+        }
+
+        // Fitur Paste massal untuk kolom Nama Murid (dari Excel/Word)
+        function handlePasteNames(event, startIndex) {
+            const pasteData = (event.clipboardData || window.clipboardData).getData('text');
+            if (!pasteData) return;
+
+            // Pecah berdasarkan baris baru (baik \r\n maupun \n) dan ambil kolom pertama
+            const rawLines = pasteData.split(/\r\n|\r|\n/);
+            // Hapus baris kosong di paling akhir bawaan salinan sel Excel
+            while (rawLines.length > 0 && rawLines[rawLines.length - 1].trim() === '') {
+                rawLines.pop();
+            }
+
+            const lines = rawLines.map(line => line.split('\t')[0].trim());
+            if (lines.length === 0) return;
+
+            // Jika seluruh kolom nama sebelumnya di-select semua (Ctrl+A / tombol Blok & Ganti Semua),
+            // timpa dari baris pertama dan sesuaikan jumlah baris dengan daftar nama baru
+            if (isAllNamesSelected) {
+                event.preventDefault();
+                isAllNamesSelected = false;
+                students = lines.map((name, idx) => ({
+                    id: Date.now() + Math.random() + idx,
+                    name: name || `Murid ${idx + 1}`,
+                    scores: students[idx] ? [...students[idx].scores] : [...QUESTION_WEIGHTS]
+                }));
+                renderTable();
+                showToast(`${lines.length} nama murid baru berhasil menggantikan seluruh daftar nama.`);
+                return;
+            }
+
+            // Jika lebih dari 1 baris atau mengandung newline, tangani sebagai paste kolom massal mulai dari baris aktif
+            if (lines.length > 1 || pasteData.includes('\n') || pasteData.includes('\r')) {
+                event.preventDefault();
+                lines.forEach((name, offset) => {
+                    const targetIdx = startIndex + offset;
+                    const validName = name || `Murid ${targetIdx + 1}`;
+                    if (targetIdx < students.length) {
+                        students[targetIdx].name = validName;
+                    } else {
+                        students.push({
+                            id: Date.now() + Math.random() + offset,
+                            name: validName,
+                            scores: [...QUESTION_WEIGHTS]
+                        });
+                    }
+                });
+                renderTable();
+                showToast(`${lines.length} nama murid berhasil di-paste ke kolom tabel.`);
+            }
+        }
+
+        // Hitung distribusi skor per butir soal secara ACAK (tidak berurutan) berdasarkan Total Skor (0-60)
+        function distributeScoresFromRawScore(rawScoreInput) {
+            const targetRawScore = Math.max(0, Math.min(MAX_RAW_SCORE, Math.round(parseFloat(rawScoreInput) || 0)));
+            
+            // Mulai dari skor penuh (60 poin), lalu hitung selisih poin yang harus dikurangi
+            const newScores = [...QUESTION_WEIGHTS];
+            let pointsToDeduct = MAX_RAW_SCORE - targetRawScore;
+
+            // Kurangi poin secara acak di antara nomor soal 1-40 hingga mencapai targetRawScore
+            while (pointsToDeduct > 0) {
+                const availableIndices = [];
+                for (let i = 0; i < TOTAL_QUESTIONS; i++) {
+                    if (newScores[i] > 0) {
+                        availableIndices.push(i);
+                    }
+                }
+
+                if (availableIndices.length === 0) break;
+
+                // Pilih indeks nomor soal secara acak
+                const randomPick = availableIndices[Math.floor(Math.random() * availableIndices.length)];
+                
+                // Kurangi 1 poin pada soal terpilih secara acak
+                newScores[randomPick] -= 1;
+                pointsToDeduct -= 1;
+            }
+
+            return newScores;
+        }
+
+        // Hitung distribusi skor per butir soal secara ACAK berdasarkan Nilai Akhir (0-100)
+        function distributeScoresFromFinalGrade(finalGrade) {
+            const clampedGrade = Math.max(0, Math.min(100, parseFloat(finalGrade) || 0));
+            const targetRawScore = Math.round((clampedGrade / 100) * MAX_RAW_SCORE);
+            return distributeScoresFromRawScore(targetRawScore);
+        }
+
+        // Update bobot butir soal & Nilai Akhir otomatis saat Total Skor (0-60) diubah manual
+        function updateStudentRawScore(studentIndex, newRawValue) {
+            const parsed = parseFloat(String(newRawValue).replace(',', '.'));
+            if (isNaN(parsed)) {
+                renderTable();
+                return;
+            }
+            const clampedRaw = Math.max(0, Math.min(MAX_RAW_SCORE, Math.round(parsed)));
+            students[studentIndex].scores = distributeScoresFromRawScore(clampedRaw);
+            renderTable();
+            showToast(`Total skor diubah ke ${clampedRaw}/60; bobot soal diacak & Nilai Akhir diperbarui.`);
+        }
+
+        // Fitur Paste massal untuk kolom Total Skor (0-60) dari Excel
+        function handlePasteRawScores(event, startIndex) {
+            const pasteData = (event.clipboardData || window.clipboardData).getData('text');
+            if (!pasteData) return;
+
+            const lines = pasteData.split(/\r?\n/)
+                .map(line => line.split('\t')[0].trim().replace(',', '.'))
+                .filter(line => line.length > 0 && !isNaN(parseFloat(line)));
+
+            if (lines.length === 0) return;
+
+            event.preventDefault();
+            lines.forEach((rawStr, offset) => {
+                const targetIdx = startIndex + offset;
+                const rawVal = parseFloat(rawStr);
+                if (targetIdx < students.length) {
+                    students[targetIdx].scores = distributeScoresFromRawScore(rawVal);
+                } else {
+                    students.push({
+                        id: Date.now() + Math.random() + offset,
+                        name: `Murid ${targetIdx + 1}`,
+                        scores: distributeScoresFromRawScore(rawVal)
+                    });
+                }
+            });
+            renderTable();
+            showToast(`${lines.length} Total Skor berhasil di-paste; bobot butir & Nilai Akhir dihitung otomatis.`);
+        }
+
+        // Update skor butir soal & total skor otomatis saat Nilai Akhir diubah manual
+        function updateStudentFinalGrade(studentIndex, newGradeValue) {
+            const parsed = parseFloat(String(newGradeValue).replace(',', '.'));
+            if (isNaN(parsed)) {
+                renderTable();
+                return;
+            }
+            students[studentIndex].scores = distributeScoresFromFinalGrade(parsed);
+            renderTable();
+            showToast(`Skor butir soal disesuaikan acak untuk nilai ${Math.max(0, Math.min(100, parsed)).toFixed(1)}.`);
+        }
+
+        // Fitur Paste massal untuk kolom Nilai Akhir (dari Excel)
+        function handlePasteGrades(event, startIndex) {
+            const pasteData = (event.clipboardData || window.clipboardData).getData('text');
+            if (!pasteData) return;
+
+            const lines = pasteData.split(/\r?\n/)
+                .map(line => line.split('\t')[0].trim().replace(',', '.'))
+                .filter(line => line.length > 0 && !isNaN(parseFloat(line)));
+
+            if (lines.length === 0) return;
+
+            event.preventDefault();
+            lines.forEach((gradeStr, offset) => {
+                const targetIdx = startIndex + offset;
+                const gradeVal = parseFloat(gradeStr);
+                if (targetIdx < students.length) {
+                    students[targetIdx].scores = distributeScoresFromFinalGrade(gradeVal);
+                } else {
+                    students.push({
+                        id: Date.now() + Math.random() + offset,
+                        name: `Murid ${targetIdx + 1}`,
+                        scores: distributeScoresFromFinalGrade(gradeVal)
+                    });
+                }
+            });
+            renderTable();
+            showToast(`${lines.length} nilai akhir berhasil di-paste & skor butir dihitung otomatis.`);
+        }
+
+        // Hapus baris murid
+        function deleteStudentRow(studentIndex) {
+            const removedName = students[studentIndex].name;
+            students.splice(studentIndex, 1);
+            renderTable();
+            showToast(`Data murid "${removedName}" dihapus.`);
+        }
+
+        // Tambah 1 murid baru dengan skor awal penuh (60)
+        function addStudentRow() {
+            const nextNum = students.length + 1;
+            students.push({
+                id: Date.now(),
+                name: `Murid ${nextNum}`,
+                scores: [...QUESTION_WEIGHTS]
+            });
+            renderTable();
+            showToast(`Murid baru ditambahkan.`);
+        }
+
+        // Reset semua skor menjadi benar semua (Total Skor 60, Nilai 100)
+        function setAllFullScore() {
+            students.forEach(s => {
+                s.scores = [...QUESTION_WEIGHTS];
+            });
+            renderTable();
+            showToast('Semua murid direset ke skor maksimal (60 / Nilai 100).');
+        }
+
+        // Simulasi variasi jawaban realistis untuk demonstrasi analisis
+        function simulateRealisticData() {
+            students.forEach((s, idx) => {
+                // Buat variasi kemampuan murid
+                const ability = 0.45 + ((idx * 17) % 50) / 100; 
+                s.scores = QUESTION_WEIGHTS.map((maxW, qIdx) => {
+                    // Soal nomor akhir cenderung lebih menantang
+                    const difficultyFactor = qIdx >= 35 ? 0.65 : (qIdx >= 25 ? 0.8 : 0.92);
+                    const prob = ability * difficultyFactor;
+                    const rand = Math.random();
+                    if (rand < prob) return maxW;
+                    if (maxW > 1 && rand < prob + 0.25) return maxW - 1;
+                    return 0;
+                });
+            });
+            renderTable();
+            showToast('Simulasi variasi jawaban murid diterapkan.');
+        }
+
+        // Modal Import Massal
+        function openBulkModal() {
+            document.getElementById('bulkModal').classList.remove('hidden');
+            document.getElementById('bulkModal').classList.add('flex');
+            document.getElementById('bulkNamesTextarea').focus();
+        }
+
+        function closeBulkModal() {
+            document.getElementById('bulkModal').classList.add('hidden');
+            document.getElementById('bulkModal').classList.remove('flex');
+        }
+
+        function processBulkNames() {
+            const rawText = document.getElementById('bulkNamesTextarea').value;
+            const replaceAll = document.getElementById('replaceExistingCheck').checked;
+            const names = rawText.split(/\r?\n/).map(n => n.trim()).filter(n => n.length > 0);
+
+            if (names.length === 0) {
+                showToast('Masukkan minimal satu nama murid.');
+                return;
+            }
+
+            const newEntries = names.map((name, i) => ({
+                id: Date.now() + i,
+                name: name,
+                scores: [...QUESTION_WEIGHTS]
+            }));
+
+            if (replaceAll) {
+                students = newEntries;
+            } else {
+                students = [...students, ...newEntries];
+            }
+
+            document.getElementById('bulkNamesTextarea').value = '';
+            closeBulkModal();
+            renderTable();
+            showToast(`${names.length} murid berhasil ditambahkan.`);
+        }
+
+        // Salin tabel ke clipboard (format TSV agar rapi saat di-paste ke Excel)
+        function copyAllTableToClipboard(dataOnly = false) {
+            const headers = ['No', 'Nama Murid'];
+            for (let i = 1; i <= TOTAL_QUESTIONS; i++) headers.push(`${i}`);
+            headers.push('Total Skor', 'Nilai Akhir');
+
+            const weightHeader = ['', 'Bobot Maksimal', ...QUESTION_WEIGHTS, MAX_RAW_SCORE, '100'];
+
+            const rows = [];
+            if (!dataOnly) {
+                rows.push(headers.join('\t'));
+                rows.push(weightHeader.join('\t'));
+            }
+
+            students.forEach((s, idx) => {
+                const rawTotal = s.scores.reduce((a, b) => a + b, 0);
+                // Gunakan koma desimal agar terbaca sebagai angka presisi di Excel regional Indonesia
+                const finalGrade = ((rawTotal / MAX_RAW_SCORE) * 100).toFixed(1).replace('.', ',');
+                const cleanName = s.name.replace(/[\t\r\n]+/g, ' ').trim();
+                rows.push([idx + 1, cleanName, ...s.scores, rawTotal, finalGrade].join('\t'));
+            });
+
+            const textArea = document.createElement('textarea');
+            textArea.value = rows.join('\n');
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-9999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+
+            if (dataOnly) {
+                showToast(`${students.length} baris data (No, Nama, Soal 1-40, Total Skor, Nilai Akhir) disalin!`);
+            } else {
+                showToast(`Tabel lengkap (${students.length} murid + header & bobot) berhasil disalin ke clipboard!`);
+            }
+        }
+
+        // Export ke file CSV yang kompatibel dengan Microsoft Excel
+        function exportToExcelCSV() {
+            const kkm = parseFloat(document.getElementById('kkmInput').value) || 75;
+            const headers = ['No', 'Nama Murid'];
+            for (let i = 1; i <= TOTAL_QUESTIONS; i++) headers.push(`No.${i}`);
+            headers.push('Total Skor (Maks 60)', 'Nilai Akhir (Maks 100)', 'Keterangan');
+
+            const weightRow = ['', 'Bobot Maksimal', ...QUESTION_WEIGHTS, MAX_RAW_SCORE, '100', `KKM: ${kkm}`];
+
+            const csvRows = [
+                headers.join(';'),
+                weightRow.join(';')
+            ];
+
+            students.forEach((s, idx) => {
+                const rawTotal = s.scores.reduce((a, b) => a + b, 0);
+                const finalGrade = ((rawTotal / MAX_RAW_SCORE) * 100).toFixed(1).replace('.', ',');
+                const status = ((rawTotal / MAX_RAW_SCORE) * 100) >= kkm ? 'Tuntas' : 'Remedial';
+                const safeName = `"${s.name.replace(/"/g, '""')}"`;
+                csvRows.push([idx + 1, safeName, ...s.scores, rawTotal, finalGrade, status].join(';'));
+            });
+
+            const csvContent = '\uFEFF' + csvRows.join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'Analisis_Butir_Soal_Mandarin_Kelas4.csv');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast('File Excel (.csv) berhasil diunduh.');
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Inisialisasi saat halaman dimuat
+        window.onload = function () {
+            buildTableHeader();
+            renderTable();
+        };
+    </script>
+</body>
+</html>
